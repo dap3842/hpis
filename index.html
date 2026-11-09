@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="format-detection" content="telephone=no">
+  <title>Атлас Поттерианы ФИПИ — 1 709 тем</title>
+  <link rel="stylesheet" href="styles.css?v=20261103_06">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:ital,wght@0,400;1,300;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header>
+    <div class="logo-group">
+      <div class="logo-icon">⚡</div>
+      <div class="logo-text">
+        <h1>Атлас Поттерианы</h1>
+        <p class="logo-sub">1 709 тем • Канон Росмэн • ФИПИ</p>
+      </div>
+    </div>
+
+    <!-- Desktop Navigation Tabs (Hidden on mobile phones, shown on tablet/desktop) -->
+    <nav class="nav-tabs desktop-only">
+      <button class="tab-btn active" data-tab="map">Карта созвездий</button>
+      <button class="tab-btn" data-tab="list">Все темы (1 709)</button>
+      <button class="tab-btn" data-tab="heroes">Досье героев</button>
+      <button class="tab-btn" data-tab="quotes">Банк цитат</button>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <button class="btn-secondary" id="btn-self-test" title="Самопроверка">
+        <span class="btn-icon">🔒</span>
+        <span class="btn-text btn-text-desktop">Самопроверка</span>
+        <span class="btn-text btn-text-mobile">Тест</span>
+      </button>
+      <button class="btn-primary" id="btn-open-roulette" title="Билет на экзамен (6 тем)">
+        <span class="btn-icon">🎲</span>
+        <span class="btn-text btn-text-desktop">Билет (6 тем)</span>
+        <span class="btn-text btn-text-mobile">Билет</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Viewports -->
+  <main id="main-content">
+    <!-- View 1: Galaxy Map -->
+    <section class="view-section active" id="view-map">
+      <canvas id="galaxy-canvas"></canvas>
+      
+      <!-- Top Cluster Navigator Bar -->
+      <div class="map-top-bar">
+        <span class="bar-label">Остров тем:</span>
+        <select class="filter-select" id="map-cluster-jump">
+          <option value="all">Весь атлас (Общий обзор)</option>
+        </select>
+      </div>
+
+      <!-- Map HUD Legend -->
+      <div class="map-hud">
+        <div class="map-legend">
+          <div class="legend-item">
+            <span class="legend-dot" style="background: var(--sec-1);"></span>
+            <span>Раздел 1: Духовно-нравственные</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background: var(--sec-2);"></span>
+            <span>Раздел 2: Семья, общество, Родина</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background: var(--sec-3);"></span>
+            <span>Раздел 3: Природа, наука, искусство</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map Zoom / Navigation Controls -->
+      <div class="map-controls">
+        <button class="ctrl-btn" id="ctrl-zoom-in" title="Приблизить" aria-label="Приблизить">+</button>
+        <button class="ctrl-btn" id="ctrl-zoom-out" title="Отдалить" aria-label="Отдалить">−</button>
+        <button class="ctrl-btn" id="ctrl-reset" title="Сбросить масштаб" aria-label="Сбросить масштаб">⟲</button>
+      </div>
+
+      <!-- Map Hover/Tap Tooltip -->
+      <div class="map-tooltip" id="map-tooltip">
+        <div class="tooltip-header" id="tt-sec">Раздел 1.1</div>
+        <div class="tooltip-title" id="tt-title">Тема сочинения</div>
+        <div class="tooltip-heroes" id="tt-heroes">Герои: ...</div>
+      </div>
+    </section>
+
+    <!-- View 2: Filterable List -->
+    <section class="view-section" id="view-list">
+      <div class="filter-bar">
+        <div class="filter-top-row">
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="filter-search" placeholder="Поиск по теме, герою (Снегг)...">
+            <button class="search-clear-btn" id="search-clear-btn" style="display: none;" aria-label="Очистить поиск">✕</button>
+          </div>
+          <button class="filter-toggle-btn" id="filter-toggle-btn" aria-label="Открыть фильтры">
+            <span>⚙️</span>
+            <span class="filter-toggle-text">Фильтры</span>
+            <span class="filter-active-dot" id="filter-active-dot" style="display: none;"></span>
+          </button>
+        </div>
+
+        <div class="filters-collapsible" id="filters-collapsible">
+          <select class="filter-select" id="filter-section" aria-label="Фильтр по разделу">
+            <option value="all">Все разделы ФИПИ</option>
+            <option value="1">Раздел 1: Духовно-нравственные ориентиры</option>
+            <option value="1.1">↳ 1.1 Внутренний мир и качества</option>
+            <option value="1.2">↳ 1.2 Отношение к другому</option>
+            <option value="1.3">↳ 1.3 Познание себя</option>
+            <option value="1.4">↳ 1.4 Свобода человека</option>
+            <option value="2">Раздел 2: Семья, общество, отечество</option>
+            <option value="2.1">↳ 2.1 Семья и традиции</option>
+            <option value="2.2">↳ 2.2 Человек и общество</option>
+            <option value="2.3">↳ 2.3 Родина и долг</option>
+            <option value="3">Раздел 3: Природа, наука, искусство</option>
+            <option value="3.1">↳ 3.1 Природа и человек</option>
+            <option value="3.2">↳ 3.2 Наука и человек</option>
+            <option value="3.3">↳ 3.3 Искусство и человек</option>
+          </select>
+
+          <select class="filter-select" id="filter-cluster" aria-label="Фильтр по смысловому кластеру">
+            <option value="all">Все смысловые кластеры</option>
+          </select>
+
+          <select class="filter-select" id="filter-hero" aria-label="Фильтр по персонажу">
+            <option value="all">Любой персонаж</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Quick One-Tap Filter Chips Ribbon (Single line, horizontal momentum scroll) -->
+      <div class="quick-chips-bar" id="quick-chips-bar">
+        <button class="chip-btn active" data-filter="all">Все (1 709)</button>
+        <button class="chip-btn" data-filter="sec-1">Раздел 1</button>
+        <button class="chip-btn" data-filter="sec-2">Раздел 2</button>
+        <button class="chip-btn" data-filter="sec-3">Раздел 3</button>
+        <button class="chip-btn" data-filter="top-score">★ 10/10</button>
+        <button class="chip-btn" data-filter="hero-Северус Снегг">🐍 Снегг</button>
+        <button class="chip-btn" data-filter="hero-Гарри Поттер">⚡ Гарри</button>
+        <button class="chip-btn" data-filter="hero-Невилл Долгопупс">🌱 Невилл</button>
+        <button class="chip-btn" data-filter="hero-Альбус Дамблдор">🧙 Дамблдор</button>
+      </div>
+
+      <div class="topics-grid-wrap">
+        <div class="list-meta-bar">
+          <span id="topics-counter">Загрузка тем...</span>
+          <div class="per-page-row">
+            <span>На стр:</span>
+            <select class="filter-select" id="select-per-page">
+              <option value="50">50</option>
+              <option value="100">100</option>
+              <option value="200">200</option>
+              <option value="all">Все</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="topics-grid" id="topics-grid">
+          <!-- Dynamic cards injected here -->
+        </div>
+
+        <div class="pagination-bar" id="pagination-bar">
+          <!-- Injected pagination controls -->
+        </div>
+      </div>
+    </section>
+
+    <!-- View 3: Heroes Dossier -->
+    <section class="view-section" id="view-heroes">
+      <div class="filter-bar">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="hero-search" placeholder="Поиск персонажа Поттерианы (всего 183 героя)...">
+        </div>
+      </div>
+      <div class="heroes-grid-wrap">
+        <div class="heroes-grid" id="heroes-grid">
+          <!-- Injected heroes cards -->
+        </div>
+      </div>
+    </section>
+
+    <!-- View 4: Quotes Bank -->
+    <section class="view-section" id="view-quotes">
+      <div class="filter-bar">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="quote-search" placeholder="Поиск по 2 827 каноническим цитатам Росмэн...">
+        </div>
+      </div>
+      <div class="quotes-list-wrap">
+        <div class="quotes-list" id="quotes-list">
+          <!-- Injected quotes -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Mobile Bottom Tab Bar (Fixed at bottom on phones <= 768px) -->
+  <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+    <button class="mobile-tab-btn active" data-tab="map" aria-label="Карта">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+      </svg>
+      <span>Карта</span>
+    </button>
+    <button class="mobile-tab-btn" data-tab="list" aria-label="Темы">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="8" y1="6" x2="21" y2="6"></line>
+        <line x1="8" y1="12" x2="21" y2="12"></line>
+        <line x1="8" y1="18" x2="21" y2="18"></line>
+        <line x1="3" y1="6" x2="3.01" y2="6"></line>
+        <line x1="3" y1="12" x2="3.01" y2="12"></line>
+        <line x1="3" y1="18" x2="3.01" y2="18"></line>
+      </svg>
+      <span>Темы</span>
+    </button>
+    <button class="mobile-tab-btn" data-tab="heroes" aria-label="Герои">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+      <span>Герои</span>
+    </button>
+    <button class="mobile-tab-btn" data-tab="quotes" aria-label="Цитаты">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      </svg>
+      <span>Цитаты</span>
+    </button>
+  </nav>
+
+  <!-- Drawer Backdrop (Dark overlay on mobile when drawer is open) -->
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+
+  <!-- Sidebar Topic Drawer / Mobile Bottom Sheet -->
+  <aside class="topic-drawer" id="topic-drawer">
+    <div class="drawer-drag-handle" id="drawer-drag-handle"></div>
+
+    <div class="drawer-header">
+      <div style="flex: 1; min-width: 0;">
+        <div class="drawer-badges-row">
+          <span class="badge-outline" id="drawer-sec-badge">Раздел 1.1</span>
+          <span class="badge-outline" id="drawer-cluster-tag">Кластер</span>
+        </div>
+        <h2 class="drawer-topic-text" id="drawer-topic-title">Название темы</h2>
+      </div>
+      <button class="drawer-close" id="drawer-close-btn" aria-label="Закрыть">&times;</button>
+    </div>
+
+    <!-- Quick Hero Selector Inside Drawer -->
+    <div class="drawer-hero-nav" id="drawer-hero-nav">
+      <!-- Injected hero chips -->
+    </div>
+
+    <div class="drawer-body" id="drawer-body">
+      <!-- Injected topic details -->
+    </div>
+
+    <div class="drawer-actions">
+      <button class="btn-copy" id="btn-copy-full">
+        <span>📋</span>
+        <span>Скопировать готовый разбор</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Exam Roulette Modal -->
+  <div class="modal-overlay" id="roulette-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Билет на экзамен (6 тем)</h2>
+        <button class="drawer-close" id="modal-close-btn" aria-label="Закрыть">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="roulette-ticket">
+          <div class="ticket-header">
+            <h3>Официальный комплект тем ФИПИ</h3>
+            <p>Сформирован по стандарту экзамена: по 2 темы из каждого макро-раздела</p>
+          </div>
+          <div class="ticket-topics-list" id="ticket-topics-list">
+            <!-- 6 topics injected here -->
+          </div>
+        </div>
+        <div style="text-align: center; margin-top: 0.5rem;">
+          <button class="btn-primary" id="btn-reroll-roulette" style="margin: 0 auto;">
+            <span>🎲</span> <span>Вытянуть другой билет</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div class="toast" id="toast">Разбор скопирован в буфер обмена!</div>
+
+  <!-- Load bundled data and app logic with cache buster -->
+  <script src="data.js?v=20261103_06"></script>
+  <script src="app.js?v=20261103_06"></script>
+</body>
+</html>
